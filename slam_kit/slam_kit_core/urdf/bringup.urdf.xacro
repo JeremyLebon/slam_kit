@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<robot name="disinfector" xmlns:xacro="http://wiki.ros.org/xacro">
+	<!-- ARGUMENTS -->
+    <xacro:arg name="prefix" default=""/>
+    <xacro:arg name="simulation_mode" default="false" />
+
+    <xacro:property name="prefix"  value="$(arg prefix)" /> 
+
+    <!-- dimensions of the robot parts -->
+    <xacro:include filename="$(find slam_kit_core)/urdf/dim.urdf.xacro" />
+
+    <!-- Include base of the robot -->
+    <xacro:include filename="$(find slam_kit_core)/urdf/base.urdf.xacro" />
+
+    <!-- Include of the robot  -->
+    <xacro:include filename="$(find slam_kit_core)/urdf/wheels.urdf.xacro" />
+    <!-- Include the gazebo control - diff drive plugin -->
+    <xacro:if value="$(arg simulation_mode)">
+        <xacro:include filename="$(find slam_kit_core)/urdf/gazebo_control.urdf.xacro" />
+        <xacro:gazebo_control   />
+    </xacro:if>
+    <!-- Sensors -->
+   <xacro:include filename="$(find slam_kit_core)/urdf/sensor_2d_lidar.urdf.xacro" />
+    <xacro:include filename="$(find slam_kit_core)/urdf/sensor_imu.urdf.xacro" />
+    <xacro:include filename="$(find slam_kit_core)/urdf/sensor_zed2i.urdf.xacro" />
+    
+     <!-- MACROS -->
+    <!-- Activate the base of the robot -->
+    <xacro:agv_base simulation_mode="$(arg simulation_mode)"/>
+   
+     <!-- Activate the wheels plugins -->
+    <xacro:wheel prefix="drivewhl_l" x_reflect="-1" y_reflect="1" simulation_mode="$(arg simulation_mode)" />
+    <xacro:wheel prefix="drivewhl_r" x_reflect="-1" y_reflect="-1" simulation_mode="$(arg simulation_mode)" />
+
+    <xacro:castor prefix="front" x_reflect="1" y_reflect="1" simulation_mode="$(arg simulation_mode)" />
+    <xacro:castor prefix="back" x_reflect="-1" y_reflect="-1" simulation_mode="$(arg simulation_mode)" />
+
+
+    <!-- SENSORS -->
+     <!-- SENSORS -->
+    <xacro:imu_sensor prefix="${prefix}" name="imu" index="1"  simulation_mode="$(arg simulation_mode)" parent="${prefix}base_link">
+        <origin xyz="0.07 0.0 -0.06" rpy="0 0 0" />
+    </xacro:imu_sensor>
+
+    <xacro:lidar2D prefix="${prefix}" name="lidar2D" index="1" simulation_mode="$(arg simulation_mode)" parent="${prefix}base_footprint">
+        <xacro:if value="$(arg simulation_mode)">
+            <origin xyz="0.40 0.0 0.13" rpy="0 0 1.57" />
+        </xacro:if>
+        <xacro:unless value="$(arg simulation_mode)">
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 0.0" />
+        </xacro:unless>
+    </xacro:lidar2D>
+
+    <xacro:if value="$(arg simulation_mode)">
+        <xacro:zed2i prefix="${prefix}" name="depthcam"  simulation_mode="$(arg simulation_mode)" parent="${prefix}base_footprint" index="1">
+            <origin xyz="0.0 0.0 0.86" rpy="0 0.175 0" />
+        </xacro:zed2i>
+    </xacro:if>
+    <xacro:unless value="$(arg simulation_mode)">
+        <xacro:zed2i prefix="${prefix}" name="camera"  simulation_mode="$(arg simulation_mode)" parent="${prefix}base_footprint" index="">
+            <origin xyz="0.07 0.0 -0.06" rpy="0 0.0 3.14" />
+        </xacro:zed2i>
+    </xacro:unless>
+
+    <xacro:if value="$(arg simulation_mode)">
+        <gazebo reference="lidar2D_1_link">
+            <material>Gazebo/green_disinfector</material>
+        </gazebo>
+    </xacro:if>
+
+</robot>

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<robot name="disinfector" xmlns:xacro="http://wiki.ros.org/xacro">
+	<!-- ARGUMENTS -->
+	<xacro:arg name="prefix" default=""/>
+    <xacro:property name="base_radius" value="0.35"/> 
+    <xacro:property name="base_height" value="0.4"/>
+    <xacro:property name="base_mass" value="30"/>
+
+</robot>
