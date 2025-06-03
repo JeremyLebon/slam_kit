@@ -107,7 +107,8 @@ Change value of k_correspondences: 10->20 in `config_preprocessing.json`
 
 ## velodyne-core
 ```` bash
-ros2 launch velodyne velodyne_driver_node-VLP16-composed-launch.py
+ros2 launch velodyne velodyne-all-nodes-VLP16-composed-launch.py 
+
 ````
 
 ## rs-core
