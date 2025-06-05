@@ -1,0 +1,41 @@
+services:
+  slam-kit-core:
+    #restart: always
+    build:
+      context: ./
+      dockerfile: ./docker/Dockerfile.jetson
+      args:
+        - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+        - CYCLONEDDS_URI=file:///root/ros2_ws/cylconedds_config.xml
+    network_mode: host
+    stdin_open: true
+    tty: true  
+    runtime: nvidia
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - XAUTHORITY=${XAUTH}
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPcABILITIES=all
+      - ROS_DISTRO=humble
+      - ROS_DOMAIN_ID=5
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - CYCLONEDDS_URI=file:///root/ros2_ws/cylconedds_config.xml
+    container_name: slam-kit-core
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./slam_kit:/root/ros2_ws/src/slam_kit
+      
+    command: bash 
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: 'nvidia'
+              count: all
+              capabilities: [gpu]
+
+
